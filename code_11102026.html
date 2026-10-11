@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NB // PERSONAL CHALLENGE — TERMUX NB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#0A0A0C',
+                        titanium: '#C8C9CB',
+                        graphite: '#232428',
+                        electric: '#00A3FF',
+                    },
+                    fontFamily: {
+                        mono: ['JetBrains Mono', 'Consolas', 'monospace'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .border-titanium {
+                border: 1px solid rgba(200, 201, 203, 0.3);
+            }
+            .text-shadow-glow {
+                text-shadow: 0 0 20px rgba(0, 163, 255, 0.4);
+            }
+            .card-hover {
+                transition: all 0.25s ease;
+            }
+            .card-hover:hover {
+                border-color: theme('colors.electric');
+                background-color: rgba(0, 163, 255, 0.05);
+                transform: translateY(-2px);
+            }
+            .progress-bar {
+                transition: width 0.4s ease;
+            }
+            .fade-in {
+                animation: fadeIn 0.5s ease forwards;
+            }
+            .slide-up {
+                animation: slideUp 0.5s ease forwards;
+            }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background-color: theme('colors.obsidian');
+            color: white;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+    <!-- ====== NAVIGATION ====== -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-obsidian/80 backdrop-blur-md border-b border-titanium/10">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#home" class="text-white font-mono text-lg font-bold tracking-wider">TERMUX NB</a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#home" class="text-titanium/80 hover:text-electric transition-colors text-sm">TRANG CHỦ</a>
+                <a href="#challenge" class="text-titanium/80 hover:text-electric transition-colors text-sm">THỬ THÁCH</a>
+                <a href="#about" class="text-titanium/80 hover:text-electric transition-colors text-sm">GIỚI THIỆU</a>
+                <button onclick="startQuiz()" class="bg-electric/10 text-electric px-4 py-2 rounded border border-electric/30 hover:bg-electric/20 transition-all text-sm">
+                    BẮT ĐẦU
+                </button>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <button id="menuToggle" class="md:hidden text-white text-xl">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="md:hidden hidden bg-graphite/95 backdrop-blur-md border-t border-titanium/10">
+            <div class="container mx-auto px-4 py-3 flex flex-col gap-3">
+                <a href="#home" class="text-titanium/80 py-2 hover:text-electric transition-colors text-sm">TRANG CHỦ</a>
+                <a href="#challenge" class="text-titanium/80 py-2 hover:text-electric transition-colors text-sm">THỬ THÁCH</a>
+                <a href="#about" class="text-titanium/80 py-2 hover:text-electric transition-colors text-sm">GIỚI THIỆU</a>
+                <button onclick="startQuiz()" class="bg-electric/10 text-electric px-4 py-2 rounded border border-electric/30 hover:bg-electric/20 transition-all text-sm w-full">
+                    BẮT ĐẦU THỬ THÁCH
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-16">
+        <!-- ====== HOME SECTION ====== -->
+        <section id="home" class="min-h-screen flex flex-col justify-center py-20 px-4">
+            <div class="container mx-auto max-w-5xl">
+                <div class="text-center mb-6 fade-in" style="animation-delay: 0.1s">
+                    <p class="font-mono text-titanium/60 text-sm tracking-widest">NB SYSTEM // PERSONAL CHALLENGE</p>
+                </div>
+                
+                <h1 class="text-[clamp(2.5rem,6vw,4rem)] font-bold text-center leading-tight mb-8 fade-in" style="animation-delay: 0.2s">
+                    BẠN HIỂU TÔI<br><span class="text-electric text-shadow-glow">ĐẾN MỨC NÀO?</span>
+                </h1>
+                
+                <p class="text-titanium/70 text-center max-w-2xl mx-auto mb-10 text-lg fade-in" style="animation-delay: 0.3s">
+                    10 câu hỏi được thiết kế để thử thách mức độ hiểu biết của bạn về <strong class="text-white">NGUYEN BAO</strong>. Đừng đoán theo cảm tính. Hãy chứng minh bằng câu trả lời.
+                </p>
+
+                <!-- Logo Section -->
+                <div class="flex justify-center mb-12 fade-in" style="animation-delay: 0.4s">
+                    <div class="relative group">
+                        <div class="absolute -inset-1 border border-titanium/20 rounded-lg transition-all duration-300 group-hover:border-electric/40 group-hover:shadow-[0_0_25px_rgba(0,163,255,0.15)]"></div>
+                        <div class="bg-graphite/40 p-6 rounded-lg">
+                            <!-- ==== THAY ẢNH LOGO Ở ĐÂY ==== -->
+                            <img 
+                                src="logo-nguyenbao.png" 
+                                alt="NGUYEN BAO — FOCUS • CODE • CREATE"
+                                class="max-w-[280px] w-full h-auto mx-auto"
+                                onerror="this.src='https://via.placeholder.com/280x100/0A0A0C/C8C9CB?text=>_+NGUYEN+BAO'"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="flex justify-center gap-8 md:gap-16 mb-12 fade-in" style="animation-delay: 0.5s">
+                    <div class="text-center">
+                        <p class="text-2xl font-mono font-bold text-electric">10</p>
+                        <p class="text-titanium/50 text-sm">CÂU HỎI</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-2xl font-mono font-bold text-electric">1</p>
+                        <p class="text-titanium/50 text-sm">THỬ THÁCH</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-2xl font-mono font-bold text-electric">?</p>
+                        <p class="text-titanium/50 text-sm">ĐIỂM CỦA BẠN</p>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex flex-col sm:flex-row justify-center gap-4 mb-16 fade-in" style="animation-delay: 0.6s">
+                    <button onclick="startQuiz()" class="bg-electric text-white px-8 py-3 rounded font-mono font-medium hover:bg-electric/90 transition-all shadow-[0_0_15px_rgba(0,163,255,0.25)]">
+                        [ INITIALIZE CHALLENGE → ]
+                    </button>
+                    <a href="#about" class="bg-transparent border border-titanium/30 text-titanium px-8 py-3 rounded font-mono font-medium hover:border-electric/50 hover:text-electric transition-all text-center">
+                        [ KHÁM PHÁ DỰ ÁN ]
+                    </a>
+                </div>
+
+                <!-- Scroll Indicator -->
+                <div class="text-center text-titanium/40 text-sm animate-bounce mt-8">
+                    <i class="fa fa-chevron-down"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== CHALLENGE INTRO SECTION ====== -->
+        <section id="challenge" class="min-h-screen py-24 px-4 hidden" style="background: radial-gradient(circle at center, #0F1218 0%, #0A0A0C 100%);">
+            <div class="container mx-auto max-w-2xl text-center">
+                <p class="font-mono text-electric mb-4">SYSTEM READY</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">CHALLENGE PROTOCOL: NB-01</h2>
+                <p class="text-titanium/70 mb-10 text-lg">
+                    Bạn sắp bước vào thử thách về <strong>NGUYEN BAO</strong>. Mỗi câu trả lời sẽ quyết định điểm số cuối cùng.
+                </p>
+                <button onclick="showQuestionScreen()" class="bg-electric text-white px-8 py-3 rounded font-mono font-medium hover:bg-electric/90 transition-all">
+                    [ BẮT ĐẦU NGAY → ]
+                </button>
+            </div>
+        </section>
+
+        <!-- ====== QUIZ SECTION ====== -->
+        <section id="quizScreen" class="min-h-screen py-8 px-4 hidden">
+            <div class="container mx-auto max-w-2xl">
+                <!-- Quiz Header -->
+                <div class="flex justify-between items-center mb-8">
+                    <span class="font-mono text-sm text-titanium/60">TERMUX NB</span>
+                    <span id="questionCounter" class="font-mono text-sm">1 / 10</span>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="w-full h-1 bg-graphite rounded-full mb-10">
+                    <div id="progressBar" class="h-full bg-electric rounded-full progress-bar" style="width: 10%"></div>
+                </div>
+
+                <!-- Question Container -->
+                <div id="questionContainer" class="mb-8 slide-up">
+                    <h2 id="questionText" class="text-xl md:text-2xl font-semibold mb-8">Câu hỏi ở đây</h2>
+                    
+                    <div id="answersContainer" class="flex flex-col gap-4">
+                        <!-- Answers will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Next Button -->
+                <div class="mt-12 flex justify-between">
+                    <button onclick="confirmExit()" class="text-titanium/50 text-sm hover:text-titanium transition-colors">
+                        <i class="fa fa-sign-out mr-1"></i> Thoát
+                    </button>
+                    <button id="nextBtn" onclick="nextQuestion()" disabled class="bg-electric/50 text-white px-6 py-2 rounded font-mono opacity-50 cursor-not-allowed transition-all">
+                        CÂU TIẾP THEO →
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== RESULT SCREEN ====== -->
+        <section id="resultScreen" class="min-h-screen py-20 px-4 hidden">
+            <div class="container mx-auto max-w-2xl text-center">
+                <div class="mb-8 slide-up">
+                    <p class="font-mono text-electric text-sm mb-2">CHALLENGE COMPLETED</p>
+                    
+                    <!-- Logo -->
+                    <div class="flex justify-center mb-8">
+                        <div class="relative">
+                            <div class="absolute -inset-1 border border-electric/30 rounded-lg shadow-[0_0_30px_rgba(0,163,255,0.1)]"></div>
+                            <div class="bg-graphite/40 p-4 rounded-lg">
+                                <img 
+                                    src="logo-nguyenbao.png" 
+                                    alt="NGUYEN BAO"
+                                    class="max-w-[180px] w-full h-auto"
+                                    onerror="this.src='https://via.placeholder.com/180x60/0A0A0C/C8C9CB?text=>_+NGUYEN+BAO'"
+                                >
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Score -->
+                    <p class="text-6xl md:text-7xl font-mono font-bold text-white mb-2" id="finalScore">0/10</p>
+                    <p id="resultRank" class="text-xl font-semibold text-electric mb-4">UNKNOWN VISITOR</p>
+                    <p id="resultMessage" class="text-titanium/70 max-w-md mx-auto mb-12">
+                        Bạn đã bắt đầu khám phá. Hãy thử lại để hiểu rõ hơn!
+                    </p>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-center gap-4 mb-16">
+                        <button onclick="restartQuiz()" class="bg-electric text-white px-6 py-3 rounded font-mono hover:bg-electric/90 transition-all">
+                            <i class="fa fa-refresh mr-2"></i> CHƠI LẠI
+                        </button>
+                        <button onclick="shareResult()" class="bg-transparent border border-titanium/30 text-titanium px-6 py-3 rounded font-mono hover:border-electric/50 hover:text-electric transition-all">
+                            <i class="fa fa-share-alt mr-2"></i> CHIA SẺ KẾT QUẢ
+                        </button>
+                        <button onclick="generateResultImage()" class="bg-transparent border border-titanium/30 text-titanium px-6 py-3 rounded font-mono hover:border-electric/50 hover:text-electric transition-all">
+                            <i class="fa fa-image mr-2"></i> TẠO ẢNH KẾT QUẢ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Brand Statement -->
+                <div class="pt-12 border-t border-titanium/10">
+                    <h3 class="text-xl font-bold mb-4">BUILT WITH IDENTITY. NOT IMITATION.</h3>
+                    <p class="text-titanium/60 max-w-lg mx-auto mb-6">
+                        Đây là không gian thử thách do TERMUX NB xây dựng, mang dấu ấn riêng từ ý tưởng đến trải nghiệm. Lấy cảm hứng là chuyện bình thường; tạo nên một sản phẩm có bản sắc mới là điều đáng giá.
+                    </p>
+                    <p class="text-lg font-semibold text-white mb-2">
+                        "GIAO DIỆN CÓ THỂ HỌC HỎI. CHẤT RIÊNG KHÔNG THỂ SAO CHÉP."
+                    </p>
+                    <p class="text-titanium/50 font-mono text-sm mt-6">
+                        TERMUX NB // FOCUS • CODE • CREATE
+                    </p>
+                    <p class="text-titanium/40 text-sm mt-2 italic">
+                        "BẢN GỐC CÓ DẤU ẤN. BẢN SAO CHỈ CÓ HÌNH DÁNG."
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== ABOUT SECTION ====== -->
+        <section id="about" class="py-24 px-4 border-t border-titanium/10">
+            <div class="container mx-auto max-w-3xl">
+                <h2 class="text-2xl font-bold mb-8 text-center">GIỚI THIỆU DỰ ÁN</h2>
+                
+                <div class="space-y-6 text-titanium/70">
+                    <p>
+                        <strong class="text-white">NB // PERSONAL CHALLENGE</strong> là sản phẩm do TERMUX NB xây dựng — một thử thách tương tác nơi bạn trả lời các câu hỏi để chứng minh mức độ hiểu biết của mình.
+                    </p>
+                    <p>
+                        Đây không chỉ là một bộ câu hỏi. Đây là không gian thể hiện bản sắc, được xây dựng dựa trên ba giá trị cốt lõi: <span class="text-electric font-medium">FOCUS • CODE • CREATE</span>.
+                    </p>
+                    <p>
+                        Trải nghiệm được thiết kế với tiêu chí: giao diện hiện đại, dễ sử dụng trên mọi thiết bị, và tôn trọng thông tin cá nhân của người chơi — không yêu cầu đăng nhập, không thu thập dữ liệu không cần thiết.
+                    </p>
+                </div>
+
+                <div class="mt-12 text-center">
+                    <p class="font-mono text-titanium/40 text-sm">TERMUX NB © 2026 — FOCUS • CODE • CREATE</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-graphite border border-titanium/20 px-6 py-3 rounded shadow-2xl text-sm opacity-0 transition-opacity duration-300 pointer-events-none z-50">
+        Thông báo
+    </div>
+
+    <script>
+        // ==================================================
+        // CẤU HÌNH DỮ LIỆU CÂU HỎI — CHỈNH SỬA Ở ĐÂY
+        // ==================================================
+        const QUESTIONS = [
+            {
+                id: "Q01",
+                category: "IDENTITY",
+                text: "Tài khoản TikTok chính thức của TERMUX NB là gì?",
+                options: [
+                    "@phong278.chuyenxulyphot",
+                    "@termux_nb_official",
+                    "@nguyenbao.tech",
+                    "@nb_coding"
+                ],
+                correctAnswer: 1, // chỉ số bắt đầu từ 0
+                points: 1
+            },
+            {
+                id: "Q02",
+                category: "TECH INTEREST",
+                text: "Lĩnh vực nào gắn với thương hiệu TERMUX NB?",
+                options: [
+                    "Termux, Android, Linux và lập trình",
+                    "Ẩm thực chuyên nghiệp",
+                    "Thời trang cao cấp",
+                    "Thể thao điện tử"
+                ],
+                correctAnswer: 0,
+                points: 1
+            },
+            {
+                id: "Q03",
+                category: "PROBLEM SOLVING",
+                text: "Nếu một chương trình gặp lỗi, cách xử lý nào hợp lý nhất?",
+                options: [
+                    "Đọc thông báo lỗi và kiểm tra nguyên nhân",
+                    "Xóa tất cả tệp ngay lập tức",
+                    "Bỏ qua mọi cảnh báo",
+                    "Cài lại toàn bộ hệ thống mà không kiểm tra"
+                ],
+                correctAnswer: 0,
+                points: 1
+            },
+            {
+                id: "Q04",
+                category: "VIETNAM KNOWLEDGE",
+                text: "Theo cấu trúc hành chính hiện tại, Việt Nam có bao nhiêu tỉnh và thành phố trực thuộc Trung ương?",
+                options: ["34", "58", "63", "64"],
+                correctAnswer: 2,
+                points: 1
+            },
+            {
+                id: "Q05",
+                category: "VIETNAM KNOWLEDGE",
+                text: "Thủ đô của Việt Nam là gì?",
+                options: ["Hà Nội", "Huế", "Đà Nẵng", "Cần Thơ"],
+                correctAnswer: 0,
+                points: 1
+            },
+            {
+                id: "Q06",
+                category: "VIETNAM KNOWLEDGE",
+                text: "Việt Nam thuộc khu vực nào?",
+                options: ["Đông Nam Á", "Nam Á", "Tây Á", "Trung Á"],
+                correctAnswer: 0,
+                points: 1
+            },
+            {
+                id: "Q07",
+                category: "DIGITAL WORLD",
+                text: "Một đường link được chia sẻ trên mạng nên được kiểm tra điều gì trước khi mở?",
+                options: [
+                    "Nguồn gốc và độ đáng tin cậy",
+                    "Màu sắc của biểu tượng",
+                    "Số lượng chữ trong đường link",
+                    "Hình nền của trang web"
+                ],
+                correctAnswer: 0,
+                points: 1
+            },
+            {
+                id: "Q08",
+                category: "PERSONALITY",
+                text: "Theo bạn, điều gì thể hiện rõ nhất việc một người thực sự quan tâm đến bạn?",
+                options: [
+                    "Họ nhớ và hiểu những điều bạn chia sẻ",
+                    "Họ chỉ biết tên tài khoản",
+                    "Họ chỉ xem ảnh đại diện",
+                    "Họ chỉ nhấn theo dõi"
+                ],
+                correctAnswer: 0,
+                points: 1
+            },
+            {
+                id: "Q09",
+                category: "CREATOR MINDSET",
+                text: "Điều gì giúp một website có bản sắc riêng?",
+                options: [
+                    "Ý tưởng, nhận diện và trải nghiệm được đầu tư",
+                    "Sao chép nguyên mẫu của người khác",
+                    "Chỉ thêm thật nhiều hiệu ứng",
+                    "Dùng càng nhiều màu càng tốt"
+                ],
+                correctAnswer: 0,
+                points: 1
+            },
+            {
+                id: "Q10",
+                category: "FINAL ROUND",
+                text: "Bạn tự tin đạt được bao nhiêu điểm?",
+                options: ["0–3", "4–6", "7–8", "9–10"],
+                correctAnswer: null, // Không tính điểm
+                points: 0
+            }
+        ];
+
+        // ==================================================
+        // HỆ THỐNG XẾP HẠNG — CÓ THỂ ĐIỀU CHỈNH NGƯỠNG
+        // ==================================================
+        const RANKS = [
+            { min: 9, max: 10, rank: "NB ELITE", message: "Bạn đã vượt qua thử thách với thành tích xuất sắc!" },
+            { min: 7, max: 8, rank: "INSIDER", message: "Ấn tượng đấy. Bạn có vẻ đã thực sự chú ý đến những gì tôi chia sẻ." },
+            { min: 4, max: 6, rank: "EXPLORER", message: "Bạn đã nắm được một vài điều, nhưng thử thách vẫn chưa kết thúc." },
+            { min: 0, max: 3, rank: "UNKNOWN VISITOR", message: "Bạn đã bắt đầu khám phá. Hãy thử lại để hiểu rõ hơn!" }
+        ];
+
+        // ==================================================
+        // BIẾN TRẠNG THÁI
+        // ==================================================
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedAnswerIndex = null;
+        let answeredQuestions = [];
+
+        // ==================================================
+        // MENU DI ĐỘNG
+        // ==================================================
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        });
+
+        // ==================================================
+        // CHỨC NĂNG HIỂN THỊ THÔNG BÁO
+        // ==================================================
+        function showToast(message, duration = 2500) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0');
+            }, duration);
+        }
+
+        // ==================================================
+        // ĐIỀU HƯỚNG MÀN HÌNH
+        // ==================================================
+        function hideAllSections() {
+            document.getElementById('home').classList.add('hidden');
+            document.getElementById('challenge').classList.add('hidden');
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.add('hidden');
+        }
+
+        function startQuiz() {
+            hideAllSections();
+            document.getElementById('challenge').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showQuestionScreen() {
+            hideAllSections();
+            document.getElementById('quizScreen').classList.remove('hidden');
+            resetQuizState();
+            loadQuestion();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showResultScreen() {
+            hideAllSections();
+            document.getElementById('resultScreen').classList.remove('hidden');
+            displayResults();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==================================================
+        // LOGIC QUIZ
+        // ==================================================
+        function resetQuizState() {
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedAnswerIndex = null;
+            answeredQuestions = [];
+        }
+
+        function loadQuestion() {
+            const question = QUESTIONS[currentQuestionIndex];
+            selectedAnswerIndex = null;
+            
+            // Cập nhật bộ đếm và thanh tiến trình
+            document.getElementById('questionCounter').textContent = `${currentQuestionIndex + 1} / ${QUESTIONS.length}`;
+            const progress = ((currentQuestionIndex + 1) / QUESTIONS.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            
+            // Hiển thị câu hỏi
+            document.getElementById('questionText').innerHTML = 
+                `<span class="text-electric font-mono text-sm">${question.id} — ${question.category}</span><br>${question.text}`;
+            
+            // Hiển thị các đáp án
+            const container = document.getElementById('answersContainer');
+            container.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = `border-titanium/20 border rounded-lg p-4 cursor-pointer card-hover`;
+                optionEl.dataset.index = index;
+                optionEl.innerHTML = `
+                    <span class="text-titanium/60 font-mono mr-3">${String.fromCharCode(65 + index)}.</span>
+                    <span>${option}</span>
+                `;
+                optionEl.addEventListener('click', () => selectAnswer(index, optionEl));
+                container.appendChild(optionEl);
+            });
+            
+            // Reset nút tiếp theo
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.disabled = true;
+            nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            nextBtn.textContent = currentQuestionIndex === QUESTIONS.length - 1 
+                ? '[ HOÀN THÀNH ✓ ]' 
+                : 'CÂU TIẾP THEO →';
+            
+            // Hiệu ứng xuất hiện
+            document.getElementById('questionContainer').classList.remove('slide-up');
+            void document.getElementById('questionContainer').offsetWidth;
+            document.getElementById('questionContainer').classList.add('slide-up');
+        }
+
+        function selectAnswer(index, element) {
+            const question = QUESTIONS[currentQuestionIndex];
+            
+            // Bỏ chọn tất cả
+            document.querySelectorAll('#answersContainer > div').forEach(el => {
+                el.classList.remove('border-electric', 'bg-electric/10');
+            });
+            
+            // Đánh dấu được chọn
+            element.classList.add('border-electric', 'bg-electric/10');
+            selectedAnswerIndex = index;
+            
+            // Lưu lại câu trả lời
+            answeredQuestions[currentQuestionIndex] = index;
+            
+            // Kích hoạt nút tiếp theo
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.disabled = false;
+            nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function nextQuestion() {
+            if (selectedAnswerIndex === null) return;
+            
+            const question = QUESTIONS[currentQuestionIndex];
+            
+            // Tính điểm nếu có đáp án đúng được cấu hình
+            if (question.correctAnswer !== null && selectedAnswerIndex === question.correctAnswer) {
+                score += question.points;
+            }
+            
+            // Chuyển câu hỏi hoặc kết thúc
+            if (currentQuestionIndex < QUESTIONS.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResultScreen();
+            }
+        }
+
+        function confirmExit() {
+            if (confirm('Bạn có chắc muốn thoát? Tiến độ sẽ bị mất.')) {
+                hideAllSections();
+                document.getElementById('home').classList.remove('hidden');
+            }
+        }
+
+        // ==================================================
+        // KẾT QUẢ & XẾP HẠNG
+        // ==================================================
+        function getRank(totalScore) {
+            return RANKS.find(r => totalScore >= r.min && totalScore <= r.max) || RANKS[0];
+        }
+
+        function displayResults() {
+            const maxScore = QUESTIONS.reduce((sum, q) => sum + q.points, 0);
+            const rank = getRank(score);
+            
+            document.getElementById('finalScore').textContent = `${score}/${maxScore}`;
+            document.getElementById('resultRank').textContent = rank.rank;
+            document.getElementById('resultMessage').textContent = rank.message;
+        }
+
+        // ==================================================
+        // CHIA SẺ
+        // ==================================================
+        function shareResult() {
+            const maxScore = QUESTIONS.reduce((sum, q) => sum + q.points, 0);
+            const rank = getRank(score);
+            const shareText = 
+`Tôi vừa hoàn thành NB // PERSONAL CHALLENGE với kết quả ${score}/${maxScore} — ${rank.rank}.
+Bạn có đủ tự tin để thử thách TERMUX NB không?
+
+${window.location.href}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: `NB CHALLENGE — Kết quả: ${score}/${maxScore}`,
+                    text: shareText
+                }).catch(() => copyToClipboard(shareText));
+            } else {
+                copyToClipboard(shareText);
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text)
+                .then(() => showToast('✅ Đã sao chép nội dung chia sẻ!'))
+                .catch(() => showToast('❌ Không thể sao chép. Vui lòng thử lại.'));
+        }
+
+        function generateResultImage() {
+            showToast('📸 Chức năng tạo ảnh: lưu trang hoặc chụp màn hình kết quả nhé!');
+        }
+
+        // ==================================================
+        // CHƠI LẠI
+        // ==================================================
+        function restartQuiz() {
+            hideAllSections();
+            document.getElementById('home').classList.remove('hidden');
+            showToast('🔄 Đã đặt lại. Sẵn sàng thử thách lại!');
+        }
+
+        // ==================================================
+        // KHỞI TẠO
+        // ==================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hiển thị trang chủ
+            hideAllSections();
+            document.getElementById('home').classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
